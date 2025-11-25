@@ -8,7 +8,7 @@ interface ProcessingStepProps {
   onComplete: (result: ProcessResult) => void;
 }
 
-//teste
+//teste 2
 
 const INITIAL_LOGS: ProcessLog[] = [
   { id: '1', message: 'Enviando arquivo para o servidor...', status: 'pending' },
