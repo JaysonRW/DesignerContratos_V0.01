@@ -7,7 +7,7 @@ export enum AppStep {
 }
 
 export interface ContractConfig {
-  file: File | null;
+  contractText: string;
   primaryColor: string;
   logo: File | null;
 }

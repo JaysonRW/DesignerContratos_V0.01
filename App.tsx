@@ -8,8 +8,8 @@ import { ResultStep } from './components/steps/ResultStep';
 import { AppStep, ContractConfig, ProcessResult } from './types';
 
 const INITIAL_CONFIG: ContractConfig = {
-  file: null,
-  primaryColor: '#4F46E5', // Indigo-600 default
+  contractText: '',
+  primaryColor: '#4F46E5',
   logo: null
 };
 
@@ -18,8 +18,8 @@ function App() {
   const [config, setConfig] = useState<ContractConfig>(INITIAL_CONFIG);
   const [results, setResults] = useState<ProcessResult | null>(null);
 
-  const handleFileSelect = (file: File) => {
-    setConfig(prev => ({ ...prev, file }));
+  const handleTextSubmit = (text: string) => {
+    setConfig(prev => ({ ...prev, contractText: text }));
     setStep(AppStep.BRANDING);
   };
 
@@ -47,7 +47,7 @@ function App() {
   return (
     <Layout>
       {step === AppStep.UPLOAD && (
-        <UploadStep onNext={handleFileSelect} />
+        <UploadStep onNext={handleTextSubmit} />
       )}
       
       {step === AppStep.BRANDING && (

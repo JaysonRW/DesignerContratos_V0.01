@@ -11,7 +11,7 @@ interface ProcessingStepProps {
 //teste 2
 
 const INITIAL_LOGS: ProcessLog[] = [
-  { id: '1', message: 'Enviando arquivo para o servidor...', status: 'pending' },
+  { id: '1', message: 'Enviando texto para o servidor...', status: 'pending' },
   { id: '2', message: 'Processando estrutura no backend...', status: 'pending' },
   { id: '3', message: 'Aplicando regras de formatação...', status: 'pending' },
   { id: '4', message: 'Gerando arquivos de saída...', status: 'pending' },
@@ -35,10 +35,10 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
       try {
         updateLogStatus(0, 'running');
 
-        if (!config.file) throw new Error("Arquivo não encontrado.");
+        if (!config.contractText || !config.contractText.trim()) throw new Error("Texto não encontrado.");
 
         const formData = new FormData();
-        formData.append('file', config.file);
+        formData.append('text', config.contractText);
         formData.append('primaryColor', config.primaryColor);
         if (config.logo) {
           formData.append('logo', config.logo);
@@ -49,13 +49,17 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
 
         console.log(`Conectando ao backend em: ${API_URL}`);
 
-        const response = await fetch(`${API_URL}/api/process`, {
-          method: 'POST',
-          body: formData,
-        });
+        const candidates = ['/api/process', '/process', '/api/process_text', '/process_text'];
+        let response: Response | null = null;
+        for (const path of candidates) {
+          try {
+            response = await fetch(`${API_URL}${path}`, { method: 'POST', body: formData });
+            if (response.ok) break;
+          } catch {}
+        }
 
-        if (!response.ok) {
-          throw new Error(`Erro no servidor: ${response.statusText}`);
+        if (!response || !response.ok) {
+          throw new Error(`Erro no servidor: ${response?.status ?? 'sem status'} ${response?.statusText ?? ''}`);
         }
 
         updateLogStatus(1, 'success');
