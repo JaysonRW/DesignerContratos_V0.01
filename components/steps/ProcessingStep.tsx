@@ -8,6 +8,8 @@ interface ProcessingStepProps {
   onComplete: (result: ProcessResult) => void;
 }
 
+//teste
+
 const INITIAL_LOGS: ProcessLog[] = [
   { id: '1', message: 'Enviando arquivo para o servidor...', status: 'pending' },
   { id: '2', message: 'Processando estrutura no backend...', status: 'pending' },
@@ -20,9 +22,10 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
   const [error, setError] = useState<string | null>(null);
   const hasStartedRef = useRef(false);
 
-  // Define a URL da API baseada no ambiente
-  // Se existir VITE_API_URL (produção), usa ela. Senão, usa localhost.
-  const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
+  // Define a URL da API.
+  // Prioriza variável de ambiente VITE_API_URL se existir.
+  // Caso contrário, usa a URL de produção do Render fornecida.
+  const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://app-py-designercontratos.onrender.com';
 
   useEffect(() => {
     if (hasStartedRef.current) return;
@@ -44,7 +47,8 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
         updateLogStatus(0, 'success');
         updateLogStatus(1, 'running');
 
-        // Usa a constante API_URL definida acima
+        console.log(`Conectando ao backend em: ${API_URL}`);
+
         const response = await fetch(`${API_URL}/api/process`, {
           method: 'POST',
           body: formData,
@@ -71,7 +75,7 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
 
       } catch (err) {
         console.error(err);
-        setError("Não foi possível conectar ao servidor. Verifique se o Backend está rodando.");
+        setError("Não foi possível conectar ao servidor. Verifique se o Backend está ativo no Render.");
         setLogs(prev => prev.map(l => ({ ...l, status: 'pending' }))); 
       }
     };
@@ -100,4 +104,39 @@ export const ProcessingStep: React.FC<ProcessingStepProps> = ({ config, onComple
           )}
         </div>
         <h2 className="text-xl font-bold text-slate-900">
-          {error
+          {error ? 'Erro no Processamento' : 'Reformulando Contrato'}
+        </h2>
+        <p className="text-slate-500 mt-2">
+          {error ? 'Ocorreu um erro ao comunicar com o servidor.' : 'Aguarde enquanto nossa IA organiza seu documento.'}
+        </p>
+      </div>
+
+      <div className="space-y-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        {logs.map((log) => (
+          <div key={log.id} className="flex items-center">
+            <div className="mr-3 flex-shrink-0">
+              {log.status === 'success' && <CheckCircle2 className="text-green-500" size={20} />}
+              {log.status === 'running' && <Loader2 className="text-indigo-500 animate-spin" size={20} />}
+              {log.status === 'pending' && <Circle className="text-slate-300" size={20} />}
+            </div>
+            <span className={`text-sm ${
+              log.status === 'success' ? 'text-slate-700 font-medium' : 
+              log.status === 'running' ? 'text-indigo-600 font-medium' : 
+              'text-slate-400'
+            }`}>
+              {log.message}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {error && (
+        <div className="mt-6 text-center">
+          <Button onClick={() => window.location.reload()}>
+            Tentar Novamente
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
