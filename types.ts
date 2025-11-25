@@ -1,6 +1,7 @@
 export enum AppStep {
   UPLOAD = 'UPLOAD',
   BRANDING = 'BRANDING',
+  PREVIEW = 'PREVIEW',
   PROCESSING = 'PROCESSING',
   RESULT = 'RESULT',
 }

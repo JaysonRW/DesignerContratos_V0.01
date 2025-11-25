@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from './components/Layout';
 import { UploadStep } from './components/steps/UploadStep';
 import { BrandingStep } from './components/steps/BrandingStep';
+import { PreviewStep } from './components/steps/PreviewStep';
 import { ProcessingStep } from './components/steps/ProcessingStep';
 import { ResultStep } from './components/steps/ResultStep';
 import { AppStep, ContractConfig, ProcessResult } from './types';
@@ -24,6 +25,11 @@ function App() {
 
   const handleBrandingComplete = (branding: Partial<ContractConfig>) => {
     setConfig(prev => ({ ...prev, ...branding }));
+    // Agora vai para o Preview em vez de processar direto
+    setStep(AppStep.PREVIEW);
+  };
+
+  const handlePreviewConfirm = () => {
     setStep(AppStep.PROCESSING);
   };
 
@@ -49,6 +55,14 @@ function App() {
           initialConfig={config}
           onBack={() => setStep(AppStep.UPLOAD)}
           onProcess={handleBrandingComplete}
+        />
+      )}
+
+      {step === AppStep.PREVIEW && (
+        <PreviewStep
+          config={config}
+          onBack={() => setStep(AppStep.BRANDING)}
+          onConfirm={handlePreviewConfirm}
         />
       )}
 

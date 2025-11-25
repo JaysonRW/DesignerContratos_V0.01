@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, ArrowRight, ArrowLeft, Palette, Image as ImageIcon, Check } from 'lucide-react';
+import { Upload, ArrowRight, ArrowLeft, Palette, Image as ImageIcon, Check, Eye } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { ContractConfig } from '../../types';
 
@@ -179,8 +179,8 @@ export const BrandingStep: React.FC<BrandingStepProps> = ({ initialConfig, onBac
           Voltar
         </Button>
         <Button onClick={handleContinue}>
-          Processar e Formatar
-          <ArrowRight size={16} className="ml-2" />
+          Pré-visualizar Documento
+          <Eye size={16} className="ml-2" />
         </Button>
       </div>
     </div>
